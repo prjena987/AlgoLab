@@ -1,0 +1,4010 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlgoLab — Algorithm Visual Lab</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #080b18;
+        --card: #111630;
+        --border: rgba(255, 255, 255, 0.06);
+        --cyan: #00d4ff;
+        --pink: #ff2d78;
+        --purple: #b44dff;
+        --yellow: #ffe066;
+        --green: #00ffb3;
+        --orange: #ff9500;
+        --text: #e2e8f8;
+        --muted: #5a6380;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Outfit", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 212, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 212, 255, 0.025) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .orb-1 {
+        width: 600px;
+        height: 600px;
+        background: rgba(0, 212, 255, 0.05);
+        top: -200px;
+        left: -150px;
+        animation: driftA 18s ease-in-out infinite;
+      }
+      .orb-2 {
+        width: 500px;
+        height: 500px;
+        background: rgba(255, 45, 120, 0.04);
+        bottom: -150px;
+        right: -100px;
+        animation: driftB 22s ease-in-out infinite;
+      }
+      .orb-3 {
+        width: 400px;
+        height: 400px;
+        background: rgba(180, 77, 255, 0.04);
+        top: 40%;
+        left: 40%;
+        animation: driftC 26s ease-in-out infinite;
+      }
+      @keyframes driftA {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(60px, 40px);
+        }
+      }
+      @keyframes driftB {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-50px, -30px);
+        }
+      }
+      @keyframes driftC {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(30px, -40px);
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 14px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(8, 11, 24, 0.9);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+      .logo {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: 2px;
+        transition: color 0.4s;
+      }
+      .tab-nav {
+        display: flex;
+        gap: 4px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 4px;
+      }
+      .tab-btn {
+        padding: 8px 18px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      }
+      .tab-btn:hover:not(.active) {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .tab-btn.t1.active {
+        background: linear-gradient(135deg, var(--cyan), var(--purple));
+        color: #fff;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      }
+      .tab-btn.t2.active {
+        background: linear-gradient(135deg, var(--purple), var(--pink));
+        color: #fff;
+        box-shadow: 0 0 20px rgba(180, 77, 255, 0.3);
+      }
+      .tab-btn.t3.active {
+        background: linear-gradient(135deg, var(--green), var(--cyan));
+        color: #080b18;
+        box-shadow: 0 0 20px rgba(0, 255, 179, 0.3);
+      }
+      .tab-btn.t4.active {
+        background: linear-gradient(135deg, var(--yellow), var(--orange));
+        color: #080b18;
+        box-shadow: 0 0 20px rgba(255, 224, 102, 0.3);
+      }
+      .nav-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        color: var(--green);
+      }
+      .nav-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: var(--green);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--green);
+        animation: blink 2s infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      main {
+        position: relative;
+        z-index: 1;
+        padding: 90px 40px 60px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .panel {
+        display: none;
+        animation: fadeUp 0.5s ease both;
+      }
+      .panel.active {
+        display: block;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .page-header {
+        margin-bottom: 28px;
+      }
+      .page-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+      .page-title {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.1;
+        margin-bottom: 10px;
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--muted);
+        max-width: 540px;
+        line-height: 1.6;
+      }
+      .t-cyan {
+        color: var(--cyan);
+        text-shadow: 0 0 24px rgba(0, 212, 255, 0.4);
+      }
+      .t-pink {
+        color: var(--pink);
+        text-shadow: 0 0 24px rgba(255, 45, 120, 0.4);
+      }
+      .t-purple {
+        color: var(--purple);
+        text-shadow: 0 0 24px rgba(180, 77, 255, 0.4);
+      }
+      .t-green {
+        color: var(--green);
+        text-shadow: 0 0 24px rgba(0, 255, 179, 0.4);
+      }
+      .t-orange {
+        color: var(--orange);
+        text-shadow: 0 0 24px rgba(255, 149, 0, 0.4);
+      }
+      .t-yellow {
+        color: var(--yellow);
+        text-shadow: 0 0 24px rgba(255, 224, 102, 0.4);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 14px;
+      }
+      .card-title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, var(--border), transparent);
+      }
+      .card-title.cyan {
+        color: var(--cyan);
+      }
+      .card-title.pink {
+        color: var(--pink);
+      }
+      .card-title.purple {
+        color: var(--purple);
+      }
+      .card-title.green {
+        color: var(--green);
+      }
+      .card-title.yellow {
+        color: var(--yellow);
+      }
+      .card-title.orange {
+        color: var(--orange);
+      }
+      .card.c-cyan::before,
+      .card.c-purple::before,
+      .card.c-green::before,
+      .card.c-yellow::before,
+      .card.c-orange::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        opacity: 0.35;
+      }
+      .card.c-cyan::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--cyan),
+          transparent
+        );
+      }
+      .card.c-purple::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--purple),
+          transparent
+        );
+      }
+      .card.c-green::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--green),
+          transparent
+        );
+      }
+      .card.c-yellow::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--yellow),
+          transparent
+        );
+      }
+      .card.c-orange::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--orange),
+          transparent
+        );
+      }
+      .input-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .ni {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        outline: none;
+        width: 100%;
+        transition: all 0.2s;
+      }
+      .ni::placeholder {
+        color: var(--muted);
+      }
+      .ni-cyan {
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        color: var(--cyan);
+      }
+      .ni-cyan:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+      }
+      .ni-purple {
+        border: 1px solid rgba(180, 77, 255, 0.2);
+        color: var(--purple);
+      }
+      .ni-purple:focus {
+        border-color: var(--purple);
+        box-shadow: 0 0 12px rgba(180, 77, 255, 0.15);
+      }
+      .ni-green {
+        border: 1px solid rgba(0, 255, 179, 0.2);
+        color: var(--green);
+      }
+      .ni-green:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 12px rgba(0, 255, 179, 0.15);
+      }
+      .ni-yellow {
+        border: 1px solid rgba(255, 224, 102, 0.2);
+        color: var(--yellow);
+      }
+      .ni-yellow:focus {
+        border-color: var(--yellow);
+        box-shadow: 0 0 12px rgba(255, 224, 102, 0.15);
+      }
+      .ni-orange {
+        border: 1px solid rgba(255, 149, 0, 0.2);
+        color: var(--orange);
+      }
+      .ni-orange:focus {
+        border-color: var(--orange);
+        box-shadow: 0 0 12px rgba(255, 149, 0, 0.15);
+      }
+      .btn {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        font-family: "Outfit", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn-cyan {
+        background: rgba(0, 212, 255, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.28);
+        color: var(--cyan);
+      }
+      .btn-cyan:hover {
+        background: rgba(0, 212, 255, 0.18);
+        box-shadow: 0 0 16px rgba(0, 212, 255, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-pink {
+        background: rgba(255, 45, 120, 0.1);
+        border: 1px solid rgba(255, 45, 120, 0.28);
+        color: var(--pink);
+      }
+      .btn-pink:hover {
+        background: rgba(255, 45, 120, 0.18);
+        box-shadow: 0 0 16px rgba(255, 45, 120, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-purple {
+        background: rgba(180, 77, 255, 0.1);
+        border: 1px solid rgba(180, 77, 255, 0.28);
+        color: var(--purple);
+      }
+      .btn-purple:hover {
+        background: rgba(180, 77, 255, 0.18);
+        box-shadow: 0 0 16px rgba(180, 77, 255, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-green {
+        background: rgba(0, 255, 179, 0.1);
+        border: 1px solid rgba(0, 255, 179, 0.28);
+        color: var(--green);
+      }
+      .btn-green:hover {
+        background: rgba(0, 255, 179, 0.18);
+        box-shadow: 0 0 16px rgba(0, 255, 179, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-yellow {
+        background: rgba(255, 224, 102, 0.1);
+        border: 1px solid rgba(255, 224, 102, 0.28);
+        color: var(--yellow);
+      }
+      .btn-yellow:hover {
+        background: rgba(255, 224, 102, 0.18);
+        box-shadow: 0 0 16px rgba(255, 224, 102, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-orange {
+        background: rgba(255, 149, 0, 0.1);
+        border: 1px solid rgba(255, 149, 0, 0.28);
+        color: var(--orange);
+      }
+      .btn-orange:hover {
+        background: rgba(255, 149, 0, 0.18);
+        box-shadow: 0 0 16px rgba(255, 149, 0, 0.18);
+        transform: translateY(-1px);
+      }
+      .btn-main {
+        padding: 12px;
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 10px;
+        border: none;
+        font-family: "Outfit", sans-serif;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .btn-main:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn-main.mc {
+        background: linear-gradient(135deg, var(--cyan), var(--purple));
+        color: #fff;
+        box-shadow: 0 0 18px rgba(0, 212, 255, 0.18);
+      }
+      .btn-main.mc:hover {
+        box-shadow: 0 0 28px rgba(0, 212, 255, 0.3);
+        transform: translateY(-2px);
+      }
+      .btn-main.mp {
+        background: linear-gradient(135deg, var(--purple), var(--pink));
+        color: #fff;
+        box-shadow: 0 0 18px rgba(180, 77, 255, 0.18);
+      }
+      .btn-main.mp:hover {
+        box-shadow: 0 0 28px rgba(180, 77, 255, 0.3);
+        transform: translateY(-2px);
+      }
+      .btn-main.mg {
+        background: linear-gradient(135deg, var(--green), var(--cyan));
+        color: #080b18;
+        box-shadow: 0 0 18px rgba(0, 255, 179, 0.18);
+      }
+      .btn-main.mg:hover {
+        box-shadow: 0 0 28px rgba(0, 255, 179, 0.3);
+        transform: translateY(-2px);
+      }
+      .btn-main.my {
+        background: linear-gradient(135deg, var(--yellow), var(--orange));
+        color: #080b18;
+        box-shadow: 0 0 18px rgba(255, 224, 102, 0.18);
+      }
+      .btn-main.my:hover {
+        box-shadow: 0 0 28px rgba(255, 224, 102, 0.3);
+        transform: translateY(-2px);
+      }
+      .btn-main.mo {
+        background: linear-gradient(135deg, var(--orange), var(--pink));
+        color: #fff;
+      }
+      .btn-main.mo:hover {
+        box-shadow: 0 0 28px rgba(255, 149, 0, 0.3);
+        transform: translateY(-2px);
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 18px;
+      }
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+      }
+      .stats-row {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .s3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .s4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .s2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+      .stat-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .stat-lbl {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted);
+      }
+      .log-box {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        max-height: 160px;
+        overflow-y: auto;
+        padding: 2px;
+      }
+      .log-box::-webkit-scrollbar {
+        width: 3px;
+      }
+      .log-box::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+      .log-entry {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        padding: 7px 11px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        border-left: 2px solid;
+        animation: slideIn 0.3s ease;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .log-entry.info {
+        border-color: var(--cyan);
+      }
+      .log-entry.success {
+        border-color: var(--green);
+      }
+      .log-entry.warning {
+        border-color: var(--yellow);
+      }
+      .log-entry.error {
+        border-color: var(--pink);
+      }
+      .log-entry.phase {
+        border-color: var(--purple);
+      }
+      .log-entry.result {
+        border-color: var(--cyan);
+      }
+      .log-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        white-space: nowrap;
+        min-width: 28px;
+        margin-top: 1px;
+      }
+      .log-txt {
+        color: var(--text);
+      }
+      .log-txt b {
+        font-weight: 700;
+      }
+      .type-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+      .type-btn {
+        padding: 9px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 0;
+      }
+      .type-btn.sel-cyan {
+        border-color: var(--cyan);
+        color: var(--cyan);
+        background: rgba(0, 212, 255, 0.08);
+      }
+      .type-btn.sel-pink {
+        border-color: var(--pink);
+        color: var(--pink);
+        background: rgba(255, 45, 120, 0.08);
+      }
+      .type-btn.sel-green {
+        border-color: var(--green);
+        color: var(--green);
+        background: rgba(0, 255, 179, 0.08);
+      }
+      .type-btn.sel-purple {
+        border-color: var(--purple);
+        color: var(--purple);
+        background: rgba(180, 77, 255, 0.08);
+      }
+      .speed-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .speed-lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .speed-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        width: 28px;
+        text-align: right;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 100px;
+        outline: none;
+        cursor: pointer;
+        flex: 1;
+      }
+      .rc::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        background: var(--cyan);
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(0, 212, 255, 0.5);
+      }
+      .rp::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        background: var(--purple);
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(180, 77, 255, 0.5);
+      }
+      .rg::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        background: var(--green);
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(0, 255, 179, 0.5);
+      }
+      .ry::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        background: var(--yellow);
+        border-radius: 50%;
+        box-shadow: 0 0 7px rgba(255, 224, 102, 0.5);
+      }
+      .cx-badge {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        display: inline-block;
+      }
+      .cx-op {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 3px;
+      }
+      .cx-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--purple);
+      }
+      /* TAB 1 */
+      .canvas-wrap {
+        background: rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        position: relative;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+      }
+      .empty-cv {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 280px;
+        color: var(--muted);
+        gap: 10px;
+        font-size: 13px;
+        text-align: center;
+      }
+      .empty-cv .ei {
+        font-size: 44px;
+        opacity: 0.25;
+      }
+      .arr-view {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        min-height: 52px;
+        align-items: center;
+      }
+      .arr-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .arr-cell {
+        width: 38px;
+        height: 38px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid;
+        transition: all 0.35s;
+      }
+      .arr-idx {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        color: var(--muted);
+      }
+      .cn {
+        background: rgba(0, 212, 255, 0.06);
+        border-color: rgba(0, 212, 255, 0.22);
+        color: var(--cyan);
+      }
+      .cr {
+        background: rgba(255, 45, 120, 0.14);
+        border-color: var(--pink);
+        color: var(--pink);
+        box-shadow: 0 0 8px rgba(255, 45, 120, 0.2);
+      }
+      .ch {
+        background: rgba(255, 224, 102, 0.14);
+        border-color: var(--yellow);
+        color: var(--yellow);
+        box-shadow: 0 0 8px rgba(255, 224, 102, 0.2);
+      }
+
+      .algo-sel {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .algo-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .algo-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .algo-card:hover {
+        transform: translateY(-2px);
+      }
+      .algo-card.ah {
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 0 16px rgba(0, 212, 255, 0.07);
+      }
+      .algo-card.ah::before {
+        background: linear-gradient(90deg, var(--cyan), var(--purple));
+        opacity: 1;
+      }
+      .algo-card.as {
+        border-color: rgba(255, 45, 120, 0.3);
+        box-shadow: 0 0 16px rgba(255, 45, 120, 0.07);
+      }
+      .algo-card.as::before {
+        background: linear-gradient(90deg, var(--pink), var(--orange));
+        opacity: 1;
+      }
+      .algo-card.am {
+        border-color: rgba(180, 77, 255, 0.3);
+        box-shadow: 0 0 16px rgba(180, 77, 255, 0.07);
+      }
+      .algo-card.am::before {
+        background: linear-gradient(90deg, var(--purple), var(--pink));
+        opacity: 1;
+      }
+      .ac-icon {
+        font-size: 24px;
+        margin-bottom: 7px;
+      }
+      .ac-name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .ac-cx {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .ac-desc {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 5px;
+        line-height: 1.4;
+      }
+      .bars-out {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 14px 12px 34px;
+        min-height: 220px;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        overflow: hidden;
+      }
+      .bw {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 1;
+        position: relative;
+      }
+      .bar {
+        width: 100%;
+        border-radius: 4px 4px 0 0;
+        transition:
+          height 0.22s ease,
+          background 0.22s ease,
+          box-shadow 0.22s ease;
+        min-height: 4px;
+      }
+      .blbl {
+        position: absolute;
+        bottom: -19px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        color: var(--muted);
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+      .legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .ld {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+      }
+      .ctx {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .ctx th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted);
+        padding: 7px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      .ctx td {
+        padding: 9px 7px;
+        font-size: 11px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .ctx tr:last-child td {
+        border-bottom: none;
+      }
+      .cm {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+      }
+      /* TAB 3 */
+      .mode-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .mode-btn {
+        padding: 10px 22px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--card);
+        color: var(--muted);
+        font-family: "Outfit", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .mode-btn.mk {
+        border-color: rgba(0, 255, 179, 0.4);
+        color: var(--green);
+        background: rgba(0, 255, 179, 0.07);
+      }
+      .mode-btn.mq {
+        border-color: rgba(255, 149, 0, 0.4);
+        color: var(--orange);
+        background: rgba(255, 149, 0, 0.07);
+      }
+      .sub {
+        display: none;
+      }
+      .sub.on {
+        display: block;
+      }
+      .arr-disp {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.18);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        min-height: 54px;
+        align-items: center;
+      }
+      .kc {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+      }
+      .kb {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid;
+        transition: all 0.35s;
+      }
+      .ki {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        color: var(--muted);
+      }
+      .kn {
+        background: rgba(0, 255, 179, 0.05);
+        border-color: rgba(0, 255, 179, 0.18);
+        color: var(--green);
+      }
+      .ka {
+        background: rgba(255, 224, 102, 0.12);
+        border-color: var(--yellow);
+        color: var(--yellow);
+        box-shadow: 0 0 8px rgba(255, 224, 102, 0.2);
+      }
+      .kres {
+        background: rgba(0, 212, 255, 0.12);
+        border-color: var(--cyan);
+        color: var(--cyan);
+        box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+      }
+      .ks {
+        background: rgba(255, 45, 120, 0.05);
+        border-color: rgba(255, 45, 120, 0.15);
+        color: rgba(255, 45, 120, 0.55);
+      }
+      .res-box {
+        background: rgba(0, 0, 0, 0.28);
+        border-radius: 14px;
+        padding: 26px;
+        text-align: center;
+        border: 1px solid rgba(0, 212, 255, 0.16);
+      }
+      .res-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .res-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 58px;
+        font-weight: 700;
+        line-height: 1;
+        background: linear-gradient(135deg, var(--cyan), var(--green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
+      }
+      .res-sub {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .pq-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        max-height: 310px;
+        overflow-y: auto;
+        padding: 2px;
+      }
+      .pq-list::-webkit-scrollbar {
+        width: 3px;
+      }
+      .pq-list::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+      }
+      .pq-row {
+        display: flex;
+        align-items: center;
+        padding: 11px 14px;
+        border-radius: 10px;
+        border: 1px solid;
+        transition: all 0.3s;
+        animation: slideIn 0.3s ease;
+      }
+      .pq-row.r1 {
+        background: rgba(0, 212, 255, 0.08);
+        border-color: rgba(0, 212, 255, 0.28);
+      }
+      .pq-row.r2 {
+        background: rgba(0, 255, 179, 0.05);
+        border-color: rgba(0, 255, 179, 0.2);
+      }
+      .pq-row.r3 {
+        background: rgba(180, 77, 255, 0.05);
+        border-color: rgba(180, 77, 255, 0.15);
+      }
+      .pq-row.rx {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: var(--border);
+      }
+      .pq-rk {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        width: 26px;
+      }
+      .pq-pr {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 19px;
+        font-weight: 700;
+        width: 52px;
+      }
+      .pq-nm {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .pq-cr {
+        position: absolute;
+        right: 12px;
+        font-size: 15px;
+        opacity: 0.55;
+      }
+      /* TAB 4 */
+      .sum-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .sum-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 17px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+      }
+      .sum-card:hover {
+        transform: translateY(-2px);
+      }
+      .sum-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .sum-card.sc::before {
+        background: linear-gradient(90deg, var(--cyan), transparent);
+      }
+      .sum-card.sg::before {
+        background: linear-gradient(90deg, var(--green), transparent);
+      }
+      .sum-card.sp::before {
+        background: linear-gradient(90deg, var(--pink), transparent);
+      }
+      .sum-card.sy::before {
+        background: linear-gradient(90deg, var(--yellow), transparent);
+      }
+      .sum-card.sc:hover {
+        border-color: rgba(0, 212, 255, 0.18);
+      }
+      .sum-card.sg:hover {
+        border-color: rgba(0, 255, 179, 0.18);
+      }
+      .sum-card.sp:hover {
+        border-color: rgba(255, 45, 120, 0.18);
+      }
+      .sum-card.sy:hover {
+        border-color: rgba(255, 224, 102, 0.18);
+      }
+      .sum-icon {
+        font-size: 22px;
+        margin-bottom: 10px;
+      }
+      .sum-lbl {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--muted);
+        margin-bottom: 7px;
+      }
+      .sum-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 25px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .sum-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+      .chart-cv {
+        width: 100%;
+        border-radius: 8px;
+        display: block;
+        cursor: crosshair;
+      }
+      .tog {
+        padding: 6px 12px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin: 0 4px 4px 0;
+      }
+      .tog.tc {
+        border-color: var(--cyan);
+        color: var(--cyan);
+        background: rgba(0, 212, 255, 0.07);
+      }
+      .tog.tg {
+        border-color: var(--green);
+        color: var(--green);
+        background: rgba(0, 255, 179, 0.07);
+      }
+      .tog.tp {
+        border-color: var(--pink);
+        color: var(--pink);
+        background: rgba(255, 45, 120, 0.07);
+      }
+      .tog.tpu {
+        border-color: var(--purple);
+        color: var(--purple);
+        background: rgba(180, 77, 255, 0.07);
+      }
+      .tog.ty {
+        border-color: var(--yellow);
+        color: var(--yellow);
+        background: rgba(255, 224, 102, 0.07);
+      }
+      .tog.to {
+        border-color: var(--orange);
+        color: var(--orange);
+        background: rgba(255, 149, 0, 0.07);
+      }
+      .bt {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .bt th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--muted);
+        padding: 8px 9px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      .bt td {
+        padding: 9px;
+        font-size: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+        font-family: "JetBrains Mono", monospace;
+      }
+      .bt tr:last-child td {
+        border-bottom: none;
+      }
+      .bt tr:hover td {
+        background: rgba(255, 255, 255, 0.015);
+      }
+      .bigo-g {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .bigo-c {
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 14px;
+        text-align: center;
+        transition: all 0.3s;
+      }
+      .bigo-c:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 224, 102, 0.12);
+      }
+      .bigo-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        margin: 0 auto 9px;
+      }
+      .bigo-n {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      .bigo-lbl {
+        font-size: 10px;
+        color: var(--muted);
+        margin-bottom: 7px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .bigo-ex {
+        font-size: 10px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .m-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 9px;
+      }
+      .m-lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        width: 115px;
+        flex-shrink: 0;
+      }
+      .m-bg {
+        flex: 1;
+        height: 7px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .m-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .m-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        width: 88px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .pbw {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pb {
+        height: 5px;
+        border-radius: 3px;
+        min-width: 3px;
+      }
+      .pv {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      @media (max-width: 1000px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+        .algo-sel {
+          grid-template-columns: 1fr;
+        }
+        .sum-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .bigo-g {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .s4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 600px) {
+        nav {
+          padding: 10px 14px;
+        }
+        main {
+          padding: 76px 14px 40px;
+        }
+        .page-title {
+          font-size: 26px;
+        }
+        .tab-btn {
+          padding: 7px 9px;
+          font-size: 11px;
+        }
+        .sum-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <nav>
+      <div class="logo" id="nav-logo" style="color: var(--cyan)">
+        ALGO<span style="color: var(--pink)">LAB</span>
+      </div>
+      <div class="tab-nav">
+        <button class="tab-btn t1 active" onclick="switchTab(1)">
+          ⬡ Heap Lab
+        </button>
+        <button class="tab-btn t2" onclick="switchTab(2)">↕ Sorting Lab</button>
+        <button class="tab-btn t3" onclick="switchTab(3)">Kth Element</button>
+        <button class="tab-btn t4" onclick="switchTab(4)">◎ Complexity</button>
+      </div>
+      <div class="nav-badge">LIVE</div>
+    </nav>
+    <main>
+      <!-- TAB 1: HEAP LAB -->
+      <div class="panel active" id="panel-1">
+        <div class="page-header">
+          <div class="page-tag" style="color: var(--cyan)">
+            // 01 · Data Structures
+          </div>
+          <h1 class="page-title">
+            <span class="t-cyan">Heap</span> <span class="t-pink">Lab</span>
+          </h1>
+          <p class="page-subtitle">
+            Visualize heap construction, insertions, deletions and heapify
+            operations step-by-step with real-time tree animation.
+          </p>
+        </div>
+        <div class="grid2">
+          <div class="sidebar">
+            <div class="card c-cyan">
+              <div class="card-title cyan">Heap Type</div>
+              <div class="type-grid">
+                <button
+                  class="type-btn sel-cyan"
+                  id="h-max-btn"
+                  onclick="hSetType('max')"
+                >
+                  ▲ Max Heap
+                </button>
+                <button
+                  class="type-btn"
+                  id="h-min-btn"
+                  onclick="hSetType('min')"
+                >
+                  ▼ Min Heap
+                </button>
+              </div>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Insert</div>
+              <div class="input-group">
+                <label class="input-label">Value</label
+                ><input
+                  type="number"
+                  class="ni ni-cyan"
+                  id="h-ins-v"
+                  placeholder="Enter number..."
+                  onkeydown="if (event.key === 'Enter') hInsert();"
+                />
+              </div>
+              <button class="btn-main mc" onclick="hInsert()">
+                ↑ Insert Node
+              </button>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Operations</div>
+              <button class="btn btn-pink" onclick="hExtract()">
+                ↓ Extract Root
+              </button>
+              <button class="btn btn-purple" onclick="hPeek()">
+                ◉ Peek Root
+              </button>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 8px;
+                  margin-bottom: 8px;
+                "
+              >
+                <div>
+                  <label class="input-label">Index</label
+                  ><input
+                    type="number"
+                    class="ni ni-cyan"
+                    id="h-ck-i"
+                    placeholder="idx"
+                  />
+                </div>
+                <div>
+                  <label class="input-label">New Key</label
+                  ><input
+                    type="number"
+                    class="ni ni-cyan"
+                    id="h-ck-v"
+                    placeholder="val"
+                  />
+                </div>
+              </div>
+              <button class="btn btn-green" onclick="hChangeKey()">
+                ⟳ Change Key
+              </button>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Build Heap</div>
+              <div class="input-group">
+                <label class="input-label">Array (comma separated)</label
+                ><input
+                  type="text"
+                  class="ni ni-cyan"
+                  id="h-build-a"
+                  placeholder="e.g. 4,10,3,5,1,8"
+                />
+              </div>
+              <button
+                class="btn-main mc"
+                onclick="hBuild()"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--purple),
+                    var(--cyan)
+                  );
+                "
+              >
+                ⚡ Build from Array
+              </button>
+              <button class="btn btn-pink" onclick="hClear()">
+                ✕ Clear Heap
+              </button>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Speed</div>
+              <div class="speed-row">
+                <span class="speed-lbl">Slow</span
+                ><input
+                  type="range"
+                  class="rc"
+                  min="1"
+                  max="5"
+                  value="3"
+                  oninput="
+                    hSpd = parseInt(this.value);
+                    this.nextElementSibling.textContent = this.value + 'x';
+                  "
+                /><span class="speed-lbl">Fast</span
+                ><span class="speed-val" style="color: var(--cyan)">3x</span>
+              </div>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Complexity</div>
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 7px"
+              >
+                <div class="cx-badge">
+                  <div class="cx-op">Insert</div>
+                  <div class="cx-val">O(log n)</div>
+                </div>
+                <div class="cx-badge">
+                  <div class="cx-op">Extract</div>
+                  <div class="cx-val">O(log n)</div>
+                </div>
+                <div class="cx-badge">
+                  <div class="cx-op">Peek</div>
+                  <div class="cx-val">O(1)</div>
+                </div>
+                <div class="cx-badge">
+                  <div class="cx-op">Build</div>
+                  <div class="cx-val">O(n)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="stats-row s3">
+              <div class="stat">
+                <div class="stat-val" id="h-sz" style="color: var(--cyan)">
+                  0
+                </div>
+                <div class="stat-lbl">Size</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="h-rt" style="color: var(--pink)">
+                  —
+                </div>
+                <div class="stat-lbl">Root</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="h-ops" style="color: var(--purple)">
+                  0
+                </div>
+                <div class="stat-lbl">Operations</div>
+              </div>
+            </div>
+            <div class="card c-cyan" style="padding: 0">
+              <div style="padding: 14px 18px 0">
+                <div class="card-title cyan">Tree Visualization</div>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="h-cv" height="300"></canvas>
+                <div class="empty-cv" id="h-empty">
+                  <div class="ei">⬡</div>
+                  Heap is empty.<br />Insert values or build from array.
+                </div>
+              </div>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Array Representation</div>
+              <div class="arr-view" id="h-arr">
+                <span style="color: var(--muted); font-size: 13px"
+                  >No elements yet...</span
+                >
+              </div>
+            </div>
+            <div class="card c-cyan">
+              <div class="card-title cyan">Step Log</div>
+              <div class="log-box" id="h-log">
+                <div class="log-entry info">
+                  <span class="log-num">#00</span
+                  ><span class="log-txt">Heap Lab ready.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: SORTING LAB -->
+      <div class="panel" id="panel-2">
+        <div class="page-header">
+          <div class="page-tag" style="color: var(--purple)">
+            // 02 · Algorithms
+          </div>
+          <h1 class="page-title">
+            <span class="t-purple">Sorting</span>
+            <span class="t-pink">Lab</span>
+          </h1>
+          <p class="page-subtitle">
+            Watch Heap Sort, Selection Sort and Merge Sort animate in real-time.
+            Every comparison and swap explained step-by-step.
+          </p>
+        </div>
+        <div class="algo-sel">
+          <div class="algo-card ah" id="sc-heap" onclick="sAlgoSel('heap')">
+            <div class="ac-icon">⬡</div>
+            <div class="ac-name" style="color: var(--cyan)">Heap Sort</div>
+            <div class="ac-cx">O(n log n) · all cases</div>
+            <div class="ac-desc">
+              Build max-heap, extract root repeatedly. In-place.
+            </div>
+          </div>
+          <div
+            class="algo-card"
+            id="sc-selection"
+            onclick="sAlgoSel('selection')"
+          >
+            <div class="ac-icon">◎</div>
+            <div class="ac-name" style="color: var(--pink)">Selection Sort</div>
+            <div class="ac-cx">O(n²) · all cases</div>
+            <div class="ac-desc">
+              Find minimum each pass, place at front. Simple.
+            </div>
+          </div>
+          <div class="algo-card" id="sc-merge" onclick="sAlgoSel('merge')">
+            <div class="ac-icon">⟨⟩</div>
+            <div class="ac-name" style="color: var(--purple)">Merge Sort</div>
+            <div class="ac-cx">O(n log n) · all cases</div>
+            <div class="ac-desc">Divide and conquer. Stable. O(n) space.</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="sidebar">
+            <div class="card c-purple">
+              <div class="card-title purple">Array Input</div>
+              <div class="input-group">
+                <label class="input-label">Custom Array</label
+                ><input
+                  type="text"
+                  class="ni ni-purple"
+                  id="s-custom"
+                  placeholder="e.g. 5,3,8,1,9,2"
+                />
+              </div>
+              <button class="btn btn-purple" onclick="sLoadCustom()">
+                ↑ Load Array
+              </button>
+              <button class="btn btn-cyan" onclick="sGenRandom()">
+                ⚄ Random Array
+              </button>
+              <div class="input-group" style="margin-top: 4px">
+                <label class="input-label">Random Size</label
+                ><input
+                  type="number"
+                  class="ni ni-purple"
+                  id="s-sz"
+                  value="14"
+                  min="4"
+                  max="28"
+                />
+              </div>
+            </div>
+            <div class="card c-purple">
+              <div class="card-title purple">Controls</div>
+              <button class="btn-main mp" id="s-start-btn" onclick="sStart()">
+                ▶ Start Sort
+              </button>
+              <button class="btn btn-pink" id="s-reset-btn" onclick="sReset()">
+                ↺ Reset
+              </button>
+              <div class="speed-row" style="margin-top: 10px">
+                <span class="speed-lbl">Slow</span
+                ><input
+                  type="range"
+                  class="rp"
+                  min="1"
+                  max="5"
+                  value="3"
+                  oninput="
+                    sSpd = parseInt(this.value);
+                    this.nextElementSibling.textContent = this.value + 'x';
+                  "
+                /><span class="speed-lbl">Fast</span
+                ><span class="speed-val" style="color: var(--purple)">3x</span>
+              </div>
+            </div>
+            <div class="card c-purple">
+              <div class="card-title purple">How It Works</div>
+              <div
+                id="s-desc"
+                style="font-size: 13px; color: var(--muted); line-height: 1.7"
+              ></div>
+            </div>
+            <div class="card c-purple">
+              <div class="card-title purple">Complexity</div>
+              <table class="ctx">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Best</th>
+                    <th>Worst</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="cm" style="color: var(--cyan)">Heap</td>
+                    <td class="cm" style="color: var(--green)">O(n log n)</td>
+                    <td class="cm" style="color: var(--green)">O(n log n)</td>
+                  </tr>
+                  <tr>
+                    <td class="cm" style="color: var(--pink)">Selection</td>
+                    <td class="cm" style="color: var(--pink)">O(n²)</td>
+                    <td class="cm" style="color: var(--pink)">O(n²)</td>
+                  </tr>
+                  <tr>
+                    <td class="cm" style="color: var(--purple)">Merge</td>
+                    <td class="cm" style="color: var(--green)">O(n log n)</td>
+                    <td class="cm" style="color: var(--green)">O(n log n)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="stats-row s4">
+              <div class="stat">
+                <div class="stat-val" id="s-sz-v" style="color: var(--purple)">
+                  0
+                </div>
+                <div class="stat-lbl">Size</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="s-comps" style="color: var(--yellow)">
+                  0
+                </div>
+                <div class="stat-lbl">Comparisons</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="s-swaps" style="color: var(--pink)">
+                  0
+                </div>
+                <div class="stat-lbl">Swaps</div>
+              </div>
+              <div class="stat">
+                <div
+                  class="stat-val"
+                  id="s-status"
+                  style="color: var(--green); font-size: 14px"
+                >
+                  Ready
+                </div>
+                <div class="stat-lbl">Status</div>
+              </div>
+            </div>
+            <div class="card c-purple">
+              <div class="card-title purple">Bar Visualization</div>
+              <div class="legend">
+                <div class="li">
+                  <div class="ld" style="background: var(--purple)"></div>
+                  Unsorted
+                </div>
+                <div class="li">
+                  <div class="ld" style="background: var(--yellow)"></div>
+                  Comparing
+                </div>
+                <div class="li">
+                  <div class="ld" style="background: var(--pink)"></div>
+                  Swapping
+                </div>
+                <div class="li">
+                  <div class="ld" style="background: var(--cyan)"></div>
+                  Pivot
+                </div>
+                <div class="li">
+                  <div class="ld" style="background: var(--green)"></div>
+                  Sorted
+                </div>
+              </div>
+              <div class="bars-out" id="s-bars"></div>
+            </div>
+            <div class="card c-purple">
+              <div class="card-title purple">Step Log</div>
+              <div class="log-box" id="s-log">
+                <div class="log-entry phase">
+                  <span class="log-num">#00</span
+                  ><span class="log-txt">Sorting Lab ready.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: KTH ELEMENT -->
+      <div class="panel" id="panel-3">
+        <div class="page-header">
+          <div class="page-tag" style="color: var(--green)">
+            // 03 · Search & Priority
+          </div>
+          <h1 class="page-title">
+            <span class="t-green">Kth Element</span>
+            <span style="color: var(--muted); font-size: 30px">&</span>
+            <span class="t-orange">Priority Queue</span>
+          </h1>
+          <p class="page-subtitle">
+            Find Kth smallest/largest using heap-based and sort approaches.
+            Simulate a max-priority queue with insert, extract and peek.
+          </p>
+        </div>
+        <div class="mode-tabs">
+          <button class="mode-btn mk" id="km-kth" onclick="kSwitch('kth')">
+            🔍 Kth Smallest / Largest
+          </button>
+          <button class="mode-btn" id="km-pq" onclick="kSwitch('pq')">
+            ⚡ Max Priority Queue
+          </button>
+        </div>
+        <div class="sub on" id="ksub-kth">
+          <div class="grid2">
+            <div class="sidebar">
+              <div class="card c-green">
+                <div class="card-title green">Array Input</div>
+                <div class="input-group">
+                  <label class="input-label">Custom Array</label
+                  ><input
+                    type="text"
+                    class="ni ni-green"
+                    id="k-arr"
+                    placeholder="e.g. 7,2,15,3,9,1,8"
+                  />
+                </div>
+                <button class="btn btn-green" onclick="kLoad()">
+                  ↑ Load Array
+                </button>
+                <button class="btn btn-cyan" onclick="kGen()">⚄ Random</button>
+              </div>
+              <div class="card c-green">
+                <div class="card-title green">Find Kth Element</div>
+                <div class="type-grid">
+                  <button
+                    class="type-btn sel-green"
+                    id="k-sm"
+                    onclick="
+                      kMode = 'smallest';
+                      document.getElementById('k-sm').className =
+                        'type-btn sel-green';
+                      document.getElementById('k-lg').className = 'type-btn';
+                    "
+                  >
+                    ▼ Smallest
+                  </button>
+                  <button
+                    class="type-btn"
+                    id="k-lg"
+                    onclick="
+                      kMode = 'largest';
+                      document.getElementById('k-lg').className =
+                        'type-btn sel-purple';
+                      document.getElementById('k-sm').className = 'type-btn';
+                    "
+                  >
+                    ▲ Largest
+                  </button>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">K Value</label
+                  ><input
+                    type="number"
+                    class="ni ni-green"
+                    id="k-kv"
+                    value="3"
+                    min="1"
+                  />
+                </div>
+                <div class="type-grid">
+                  <button
+                    class="type-btn sel-purple"
+                    id="k-ah"
+                    onclick="
+                      kAlgo = 'heap';
+                      document.getElementById('k-ah').className =
+                        'type-btn sel-purple';
+                      document.getElementById('k-as').className = 'type-btn';
+                    "
+                  >
+                    ⬡ Heap
+                  </button>
+                  <button
+                    class="type-btn"
+                    id="k-as"
+                    onclick="
+                      kAlgo = 'sort';
+                      document.getElementById('k-as').className =
+                        'type-btn sel-green';
+                      document.getElementById('k-ah').className = 'type-btn';
+                    "
+                  >
+                    ↕ Sort
+                  </button>
+                </div>
+                <br />
+                <button class="btn-main mg" onclick="kFind()">
+                  🔍 Find Kth Element
+                </button>
+                <button class="btn btn-pink" onclick="kReset()">↺ Reset</button>
+              </div>
+              <div class="card c-green">
+                <div class="card-title green">Speed</div>
+                <div class="speed-row">
+                  <span class="speed-lbl">Slow</span
+                  ><input
+                    type="range"
+                    class="rg"
+                    min="1"
+                    max="5"
+                    value="3"
+                    oninput="
+                      kSpd = parseInt(this.value);
+                      this.nextElementSibling.textContent = this.value + 'x';
+                    "
+                  /><span class="speed-lbl">Fast</span
+                  ><span class="speed-val" style="color: var(--green)">3x</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="stats-row s3">
+                <div class="stat">
+                  <div class="stat-val" id="k-sz" style="color: var(--green)">
+                    0
+                  </div>
+                  <div class="stat-lbl">Size</div>
+                </div>
+                <div class="stat">
+                  <div
+                    class="stat-val"
+                    id="k-kstat"
+                    style="color: var(--yellow)"
+                  >
+                    —
+                  </div>
+                  <div class="stat-lbl">K Value</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-val" id="k-ans" style="color: var(--cyan)">
+                    —
+                  </div>
+                  <div class="stat-lbl">Answer</div>
+                </div>
+              </div>
+              <div class="card c-green">
+                <div class="card-title green">Array Visualization</div>
+                <div class="arr-disp" id="k-disp">
+                  <span style="color: var(--muted); font-size: 13px"
+                    >Load or generate an array...</span
+                  >
+                </div>
+              </div>
+              <div class="card c-green" id="k-res-card" style="display: none">
+                <div class="res-box">
+                  <div class="res-tag" id="k-res-tag">Kth Smallest</div>
+                  <div class="res-val" id="k-res-val">—</div>
+                  <div class="res-sub" id="k-res-sub"></div>
+                </div>
+              </div>
+              <div class="card c-green">
+                <div class="card-title green">Step Log</div>
+                <div class="log-box" id="k-log">
+                  <div class="log-entry info">
+                    <span class="log-num">#00</span
+                    ><span class="log-txt">Kth finder ready.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sub" id="ksub-pq">
+          <div class="grid2">
+            <div class="sidebar">
+              <div class="card c-orange">
+                <div class="card-title orange">Insert Element</div>
+                <div class="input-group">
+                  <label class="input-label">Priority (higher = first)</label
+                  ><input
+                    type="number"
+                    class="ni ni-orange"
+                    id="pq-p"
+                    placeholder="e.g. 42"
+                    onkeydown="if (event.key === 'Enter') pqIns();"
+                  />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Label (optional)</label
+                  ><input
+                    type="text"
+                    class="ni ni-orange"
+                    id="pq-l"
+                    placeholder="e.g. Task A"
+                    onkeydown="if (event.key === 'Enter') pqIns();"
+                  />
+                </div>
+                <button class="btn-main mo" onclick="pqIns()">↑ Insert</button>
+              </div>
+              <div class="card c-orange">
+                <div class="card-title orange">Operations</div>
+                <button class="btn btn-orange" onclick="pqExt()">
+                  ↓ Extract Max
+                </button>
+                <button class="btn btn-cyan" onclick="pqPeek()">
+                  ◉ Peek Max
+                </button>
+                <button class="btn btn-green" onclick="pqSample()">
+                  ⚡ Load Sample Data
+                </button>
+                <button class="btn btn-pink" onclick="pqClear()">
+                  ✕ Clear Queue
+                </button>
+              </div>
+              <div class="card c-orange">
+                <div class="card-title orange">Queue Stats</div>
+                <div class="stats-row s2" style="margin-bottom: 8px">
+                  <div class="stat">
+                    <div
+                      class="stat-val"
+                      id="pq-sz"
+                      style="color: var(--orange)"
+                    >
+                      0
+                    </div>
+                    <div class="stat-lbl">Size</div>
+                  </div>
+                  <div class="stat">
+                    <div
+                      class="stat-val"
+                      id="pq-ops"
+                      style="color: var(--cyan)"
+                    >
+                      0
+                    </div>
+                    <div class="stat-lbl">Operations</div>
+                  </div>
+                </div>
+                <div class="stat">
+                  <div
+                    class="stat-val"
+                    id="pq-max"
+                    style="color: var(--yellow); font-size: 18px"
+                  >
+                    —
+                  </div>
+                  <div class="stat-lbl">Current Max Priority</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card c-orange">
+                <div class="card-title orange">Priority Queue (Max-Heap)</div>
+                <div class="pq-list" id="pq-list">
+                  <div
+                    style="
+                      color: var(--muted);
+                      font-size: 13px;
+                      padding: 18px;
+                      text-align: center;
+                    "
+                  >
+                    Queue empty. Insert elements to begin.
+                  </div>
+                </div>
+              </div>
+              <div class="card c-orange">
+                <div class="card-title orange">Operation Log</div>
+                <div class="log-box" id="pq-log">
+                  <div class="log-entry info">
+                    <span class="log-num">#00</span
+                    ><span class="log-txt">Max Priority Queue ready.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: COMPLEXITY -->
+      <div class="panel" id="panel-4">
+        <div class="page-header">
+          <div class="page-tag" style="color: var(--yellow)">
+            // 04 · Analysis
+          </div>
+          <h1 class="page-title">
+            <span class="t-yellow">Complexity</span>
+            <span class="t-orange">Dashboard</span>
+          </h1>
+          <p class="page-subtitle">
+            Compare algorithm performance with live benchmarks, growth curves,
+            comparison counts and real execution time measurements.
+          </p>
+        </div>
+        <div class="sum-row">
+          <div class="sum-card sc">
+            <div class="sum-icon">⚡</div>
+            <div class="sum-lbl">Fastest Sort</div>
+            <div class="sum-val" id="cx-fast" style="color: var(--cyan)">
+              Heap
+            </div>
+            <div class="sum-sub">n log n guaranteed</div>
+          </div>
+          <div class="sum-card sg">
+            <div class="sum-icon">💾</div>
+            <div class="sum-lbl">Best Space</div>
+            <div class="sum-val" style="color: var(--green)">O(1)</div>
+            <div class="sum-sub">Heap / Selection</div>
+          </div>
+          <div class="sum-card sp">
+            <div class="sum-icon">🔁</div>
+            <div class="sum-lbl">Last Comparisons</div>
+            <div class="sum-val" id="cx-ops" style="color: var(--pink)">—</div>
+            <div class="sum-sub">Across algorithms</div>
+          </div>
+          <div class="sum-card sy">
+            <div class="sum-icon">📐</div>
+            <div class="sum-lbl">Input Size</div>
+            <div class="sum-val" id="cx-n" style="color: var(--yellow)">—</div>
+            <div class="sum-sub">Last benchmark N</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card c-yellow" style="position: relative">
+            <div class="card-title yellow">Growth Curves</div>
+            <div style="margin-bottom: 10px">
+              <button class="tog tg" onclick="cxTog('O1')" data-k="O1">
+                O(1)
+              </button>
+              <button class="tog tc" onclick="cxTog('Ologn')" data-k="Ologn">
+                O(log n)
+              </button>
+              <button class="tog ty" onclick="cxTog('On')" data-k="On">
+                O(n)
+              </button>
+              <button class="tog tpu" onclick="cxTog('Onlogn')" data-k="Onlogn">
+                O(n log n)
+              </button>
+              <button class="tog to" onclick="cxTog('On2')" data-k="On2">
+                O(n²)
+              </button>
+              <button class="tog tp" onclick="cxTog('O2n')" data-k="O2n">
+                O(2ⁿ)
+              </button>
+            </div>
+            <canvas class="chart-cv" id="cx-chart" height="250"></canvas>
+          </div>
+          <div class="card c-yellow">
+            <div class="card-title yellow">Live Benchmark</div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 12px;
+              "
+            >
+              <div>
+                <label class="input-label">Input Size (N)</label
+                ><input
+                  type="number"
+                  class="ni ni-yellow"
+                  id="cx-bn"
+                  value="2000"
+                  min="10"
+                  max="50000"
+                />
+              </div>
+              <div>
+                <label class="input-label">Runs</label
+                ><input
+                  type="number"
+                  class="ni ni-yellow"
+                  id="cx-br"
+                  value="3"
+                  min="1"
+                  max="10"
+                />
+              </div>
+            </div>
+            <button
+              class="btn-main my"
+              id="cx-btn"
+              onclick="cxBench()"
+              style="margin-bottom: 12px"
+            >
+              ▶ Run Benchmark
+            </button>
+            <table class="bt">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Comps</th>
+                  <th>Swaps</th>
+                  <th>Time</th>
+                  <th>Rel.</th>
+                </tr>
+              </thead>
+              <tbody id="cx-tbody">
+                <tr>
+                  <td
+                    colspan="5"
+                    style="
+                      color: var(--muted);
+                      text-align: center;
+                      padding: 18px;
+                    "
+                  >
+                    Click Run Benchmark
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card c-yellow" style="margin-bottom: 16px">
+          <div class="card-title yellow">Comparison Count by Input Size</div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <div>
+              <label class="input-label">Test N</label
+              ><input
+                type="number"
+                class="ni ni-yellow"
+                id="cx-mn"
+                value="100"
+                min="2"
+                max="100000"
+                style="width: 120px"
+              />
+            </div>
+            <button
+              class="btn-yellow"
+              onclick="cxMeters()"
+              style="margin-top: 14px; width: auto; padding: 9px 16px"
+            >
+              ↻ Update
+            </button>
+          </div>
+          <div id="cx-meters"></div>
+        </div>
+        <div class="card c-yellow" style="margin-bottom: 16px">
+          <div class="card-title yellow">Big O Reference</div>
+          <div class="bigo-g">
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="
+                  background: var(--green);
+                  box-shadow: 0 0 7px var(--green);
+                "
+              ></div>
+              <div class="bigo-n" style="color: var(--green)">O(1)</div>
+              <div class="bigo-lbl">Constant</div>
+              <div class="bigo-ex">
+                Array access<br />Hash get<br />Stack push
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="background: var(--cyan); box-shadow: 0 0 7px var(--cyan)"
+              ></div>
+              <div class="bigo-n" style="color: var(--cyan)">O(log n)</div>
+              <div class="bigo-lbl">Logarithmic</div>
+              <div class="bigo-ex">
+                Binary search<br />Heap insert<br />BST ops
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="
+                  background: var(--yellow);
+                  box-shadow: 0 0 7px var(--yellow);
+                "
+              ></div>
+              <div class="bigo-n" style="color: var(--yellow)">O(n)</div>
+              <div class="bigo-lbl">Linear</div>
+              <div class="bigo-ex">
+                Linear search<br />Array traverse<br />Build heap
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="
+                  background: var(--purple);
+                  box-shadow: 0 0 7px var(--purple);
+                "
+              ></div>
+              <div class="bigo-n" style="color: var(--purple)">O(n log n)</div>
+              <div class="bigo-lbl">Linearithmic</div>
+              <div class="bigo-ex">Heap sort<br />Merge sort<br />FFT</div>
+            </div>
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="
+                  background: var(--orange);
+                  box-shadow: 0 0 7px var(--orange);
+                "
+              ></div>
+              <div class="bigo-n" style="color: var(--orange)">O(n²)</div>
+              <div class="bigo-lbl">Quadratic</div>
+              <div class="bigo-ex">
+                Selection sort<br />Bubble sort<br />Insertion
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div
+                class="bigo-dot"
+                style="background: var(--pink); box-shadow: 0 0 7px var(--pink)"
+              ></div>
+              <div class="bigo-n" style="color: var(--pink)">O(2ⁿ)</div>
+              <div class="bigo-lbl">Exponential</div>
+              <div class="bigo-ex">
+                Fibonacci naive<br />Power set<br />Brute force
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div class="bigo-dot" style="background: var(--muted)"></div>
+              <div class="bigo-n" style="color: var(--muted)">O(n!)</div>
+              <div class="bigo-lbl">Factorial</div>
+              <div class="bigo-ex">
+                Permutations<br />TSP brute<br />Bogosort
+              </div>
+            </div>
+            <div class="bigo-c">
+              <div class="bigo-dot" style="background: var(--text)"></div>
+              <div class="bigo-n" style="color: var(--text)">O(n·k)</div>
+              <div class="bigo-lbl">Linear × K</div>
+              <div class="bigo-ex">Kth heap<br />Radix sort<br />BFS/DFS</div>
+            </div>
+          </div>
+        </div>
+        <div class="card c-yellow">
+          <div class="card-title yellow">Full Algorithm Comparison</div>
+          <table class="bt">
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Best</th>
+                <th>Avg</th>
+                <th>Worst</th>
+                <th>Space</th>
+                <th>Stable</th>
+                <th>Use When</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--cyan); font-weight: 700">Heap Sort</td>
+                <td style="color: var(--green)">O(n log n)</td>
+                <td style="color: var(--yellow)">O(n log n)</td>
+                <td style="color: var(--green)">O(n log n)</td>
+                <td style="color: var(--cyan)">O(1)</td>
+                <td style="color: var(--pink)">✗</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  Guaranteed perf, memory critical
+                </td>
+              </tr>
+              <tr>
+                <td style="color: var(--pink); font-weight: 700">Selection</td>
+                <td style="color: var(--orange)">O(n²)</td>
+                <td style="color: var(--orange)">O(n²)</td>
+                <td style="color: var(--pink)">O(n²)</td>
+                <td style="color: var(--cyan)">O(1)</td>
+                <td style="color: var(--pink)">✗</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  Small arrays, minimal swaps
+                </td>
+              </tr>
+              <tr>
+                <td style="color: var(--purple); font-weight: 700">
+                  Merge Sort
+                </td>
+                <td style="color: var(--green)">O(n log n)</td>
+                <td style="color: var(--yellow)">O(n log n)</td>
+                <td style="color: var(--green)">O(n log n)</td>
+                <td style="color: var(--orange)">O(n)</td>
+                <td style="color: var(--green)">✓</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  Stability required, linked lists
+                </td>
+              </tr>
+              <tr>
+                <td style="color: var(--green); font-weight: 700">
+                  Kth (Heap)
+                </td>
+                <td style="color: var(--green)">O(n log k)</td>
+                <td style="color: var(--yellow)">O(n log k)</td>
+                <td style="color: var(--yellow)">O(n log k)</td>
+                <td style="color: var(--cyan)">O(k)</td>
+                <td style="color: var(--muted)">—</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  Find Kth element efficiently
+                </td>
+              </tr>
+              <tr>
+                <td style="color: var(--yellow); font-weight: 700">
+                  Heap Insert
+                </td>
+                <td style="color: var(--cyan)">O(1)</td>
+                <td style="color: var(--green)">O(log n)</td>
+                <td style="color: var(--green)">O(log n)</td>
+                <td style="color: var(--cyan)">O(1)</td>
+                <td style="color: var(--muted)">—</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  Priority queue operations
+                </td>
+              </tr>
+              <tr>
+                <td style="color: var(--orange); font-weight: 700">
+                  Build Heap
+                </td>
+                <td style="color: var(--yellow)">O(n)</td>
+                <td style="color: var(--yellow)">O(n)</td>
+                <td style="color: var(--yellow)">O(n)</td>
+                <td style="color: var(--cyan)">O(1)</td>
+                <td style="color: var(--muted)">—</td>
+                <td style="color: var(--muted); font-size: 11px">
+                  One-time heap construction
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // ════════════ TAB SWITCHING ════════════
+      const tabColors = {
+        1: "var(--cyan)",
+        2: "var(--purple)",
+        3: "var(--green)",
+        4: "var(--yellow)",
+      };
+      function switchTab(n) {
+        document
+          .querySelectorAll(".panel")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("panel-" + n).classList.add("active");
+        document.querySelectorAll(".tab-btn")[n - 1].classList.add("active");
+        document.getElementById("nav-logo").style.color = tabColors[n];
+        if (n === 4) {
+          setTimeout(cxDrawChart, 120);
+        }
+        if (n === 2 && sArr.length === 0) {
+          sGenRandom();
+        }
+      }
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      // ════════════ TAB 1: HEAP ════════════
+      let hHeap = [],
+        hType = "max",
+        hOps = 0,
+        hSpd = 3,
+        hHl = new Set(),
+        hStep = 0;
+      function hDelay() {
+        return [700, 450, 280, 150, 60][hSpd - 1];
+      }
+      function hCmp(a, b) {
+        return hType === "max" ? a > b : a < b;
+      }
+
+      function hSetType(t) {
+        hType = t;
+        document.getElementById("h-max-btn").className =
+          "type-btn" + (t === "max" ? " sel-cyan" : "");
+        document.getElementById("h-min-btn").className =
+          "type-btn" + (t === "min" ? " sel-pink" : "");
+        if (hHeap.length > 0) {
+          hLog(
+            "Switched to " + t.toUpperCase() + " heap. Rebuilding...",
+            "warning",
+          );
+          const a = [...hHeap];
+          hHeap = [];
+          a.forEach((v) => {
+            hHeap.push(v);
+            let i = hHeap.length - 1;
+            while (i > 0) {
+              const p = Math.floor((i - 1) / 2);
+              if (hCmp(hHeap[i], hHeap[p])) {
+                [hHeap[i], hHeap[p]] = [hHeap[p], hHeap[i]];
+                i = p;
+              } else break;
+            }
+          });
+          hRA();
+          hLog("Rebuilt.", "success");
+        }
+      }
+
+      async function hInsert() {
+        const val = parseInt(document.getElementById("h-ins-v").value);
+        if (isNaN(val)) {
+          hLog("Enter a valid number!", "error");
+          return;
+        }
+        if (hHeap.length >= 31) {
+          hLog("Max 31 nodes!", "error");
+          return;
+        }
+        document.getElementById("h-ins-v").value = "";
+        hOps++;
+        hHeap.push(val);
+        let i = hHeap.length - 1;
+        hHl = new Set([i]);
+        hLog("Inserting <b>" + val + "</b> at index " + i, "info");
+        hRA();
+        await sleep(hDelay());
+        let step = 2;
+        while (i > 0) {
+          const p = Math.floor((i - 1) / 2);
+          hHl = new Set([i, p]);
+          hRA();
+          if (hCmp(hHeap[i], hHeap[p])) {
+            hLog(
+              "Step " + step + ": Swap " + hHeap[i] + " ↔ " + hHeap[p],
+              "warning",
+            );
+            await sleep(hDelay());
+            [hHeap[i], hHeap[p]] = [hHeap[p], hHeap[i]];
+            i = p;
+            step++;
+            hRA();
+            await sleep(hDelay() * 0.5);
+          } else {
+            hLog("Heap property satisfied.", "success");
+            break;
+          }
+        }
+        hHl = new Set();
+        hRA();
+        hLog("✓ Inserted <b>" + val + "</b>. Size: " + hHeap.length, "success");
+      }
+
+      async function hExtract() {
+        if (!hHeap.length) {
+          hLog("Heap is empty!", "error");
+          return;
+        }
+        hOps++;
+        const root = hHeap[0];
+        hLog("Extracting root <b>" + root + "</b>...", "info");
+        hHl = new Set([0]);
+        hRA();
+        await sleep(hDelay());
+        hHeap[0] = hHeap[hHeap.length - 1];
+        hHeap.pop();
+        hLog("Moved last to root. Heapifying down...", "warning");
+        hRA();
+        await sleep(hDelay());
+        let i = 0,
+          step = 2;
+        while (true) {
+          const l = 2 * i + 1,
+            r = 2 * i + 2;
+          let t = i;
+          if (l < hHeap.length && hCmp(hHeap[l], hHeap[t])) t = l;
+          if (r < hHeap.length && hCmp(hHeap[r], hHeap[t])) t = r;
+          if (t !== i) {
+            hHl = new Set([i, t]);
+            hLog(
+              "Step " + step + ": Swap " + hHeap[i] + " ↔ " + hHeap[t],
+              "warning",
+            );
+            hRA();
+            await sleep(hDelay());
+            [hHeap[i], hHeap[t]] = [hHeap[t], hHeap[i]];
+            i = t;
+            step++;
+            hRA();
+            await sleep(hDelay() * 0.5);
+          } else {
+            hLog("Heap restored.", "success");
+            break;
+          }
+        }
+        hHl = new Set();
+        hRA();
+        hLog(
+          "✓ Extracted <b>" + root + "</b>. Size: " + hHeap.length,
+          "success",
+        );
+      }
+
+      function hPeek() {
+        if (!hHeap.length) {
+          hLog("Heap is empty!", "error");
+          return;
+        }
+        hOps++;
+        hHl = new Set([0]);
+        hRA();
+        hLog("Root (" + hType + "): <b>" + hHeap[0] + "</b> — O(1)", "success");
+        setTimeout(() => {
+          hHl = new Set();
+          hRA();
+        }, 2000);
+      }
+
+      async function hChangeKey() {
+        const idx = parseInt(document.getElementById("h-ck-i").value);
+        const nv = parseInt(document.getElementById("h-ck-v").value);
+        if (isNaN(idx) || isNaN(nv)) {
+          hLog("Enter valid index and value!", "error");
+          return;
+        }
+        if (idx < 0 || idx >= hHeap.length) {
+          hLog("Index out of range!", "error");
+          return;
+        }
+        hOps++;
+        const old = hHeap[idx];
+        hHeap[idx] = nv;
+        hLog("Changed index " + idx + " from " + old + " to " + nv, "info");
+        hHl = new Set([idx]);
+        hRA();
+        await sleep(hDelay());
+        let i = idx;
+        while (i > 0) {
+          const p = Math.floor((i - 1) / 2);
+          if (hCmp(hHeap[i], hHeap[p])) {
+            hHl = new Set([i, p]);
+            hRA();
+            await sleep(hDelay() * 0.6);
+            [hHeap[i], hHeap[p]] = [hHeap[p], hHeap[i]];
+            i = p;
+          } else break;
+        }
+        i = idx;
+        while (true) {
+          const l = 2 * i + 1,
+            r = 2 * i + 2;
+          let t = i;
+          if (l < hHeap.length && hCmp(hHeap[l], hHeap[t])) t = l;
+          if (r < hHeap.length && hCmp(hHeap[r], hHeap[t])) t = r;
+          if (t !== i) {
+            hHl = new Set([i, t]);
+            hRA();
+            await sleep(hDelay() * 0.6);
+            [hHeap[i], hHeap[t]] = [hHeap[t], hHeap[i]];
+            i = t;
+          } else break;
+        }
+        hHl = new Set();
+        hRA();
+        hLog("✓ Key changed.", "success");
+      }
+
+      async function hBuild() {
+        const raw = document.getElementById("h-build-a").value;
+        const arr = raw
+          .split(",")
+          .map((v) => parseInt(v.trim()))
+          .filter((v) => !isNaN(v));
+        if (!arr.length) {
+          hLog("Enter a valid array!", "error");
+          return;
+        }
+        if (arr.length > 31) {
+          hLog("Max 31 elements!", "error");
+          return;
+        }
+        hOps++;
+        hHeap = [...arr];
+        hLog(
+          "Building " + hType + " heap from [" + arr.join(",") + "]...",
+          "info",
+        );
+        hRA();
+        await sleep(hDelay());
+        for (let i = Math.floor(hHeap.length / 2) - 1; i >= 0; i--) {
+          hLog("Heapify index " + i, "warning");
+          await hHD(i);
+        }
+        hHl = new Set();
+        hRA();
+        hLog("✓ Heap built. Root: <b>" + hHeap[0] + "</b>", "success");
+      }
+
+      async function hHD(start) {
+        let i = start;
+        while (true) {
+          const l = 2 * i + 1,
+            r = 2 * i + 2;
+          let t = i;
+          if (l < hHeap.length && hCmp(hHeap[l], hHeap[t])) t = l;
+          if (r < hHeap.length && hCmp(hHeap[r], hHeap[t])) t = r;
+          if (t !== i) {
+            hHl = new Set([i, t]);
+            hRA();
+            await sleep(hDelay() * 0.5);
+            [hHeap[i], hHeap[t]] = [hHeap[t], hHeap[i]];
+            i = t;
+            hRA();
+            await sleep(hDelay() * 0.3);
+          } else break;
+        }
+      }
+
+      function hClear() {
+        hHeap = [];
+        hHl = new Set();
+        hOps = 0;
+        hStep = 0;
+        hRA();
+        document.getElementById("h-log").innerHTML =
+          '<div class="log-entry info"><span class="log-num">#00</span><span class="log-txt">Heap cleared.</span></div>';
+      }
+
+      function hDrawTree() {
+        const canvas = document.getElementById("h-cv");
+        const ctx = canvas.getContext("2d");
+        const W = canvas.offsetWidth;
+        canvas.width = W;
+        canvas.height = 300;
+        const em = document.getElementById("h-empty");
+        if (!hHeap.length) {
+          em.style.display = "flex";
+          ctx.clearRect(0, 0, W, 300);
+          return;
+        }
+        em.style.display = "none";
+        ctx.clearRect(0, 0, W, 300);
+        const levels = Math.ceil(Math.log2(hHeap.length + 1));
+        const nodeR = Math.min(22, W / (Math.pow(2, levels) * 2.5));
+        const pos = [];
+        function gp(idx, lvl, lb, rb) {
+          const x = (lb + rb) / 2,
+            y = 32 + lvl * (255 / Math.max(levels, 1));
+          pos[idx] = { x, y };
+          const l = 2 * idx + 1,
+            r = 2 * idx + 2,
+            mid = (lb + rb) / 2;
+          if (l < hHeap.length) gp(l, lvl + 1, lb, mid);
+          if (r < hHeap.length) gp(r, lvl + 1, mid, rb);
+        }
+        gp(0, 0, 0, W);
+        for (let i = 0; i < hHeap.length; i++) {
+          [2 * i + 1, 2 * i + 2].forEach((c) => {
+            if (c < hHeap.length) {
+              const hl = hHl.has(i) && hHl.has(c);
+              ctx.beginPath();
+              ctx.moveTo(pos[i].x, pos[i].y);
+              ctx.lineTo(pos[c].x, pos[c].y);
+              ctx.strokeStyle = hl
+                ? "rgba(0,212,255,0.7)"
+                : "rgba(255,255,255,0.07)";
+              ctx.lineWidth = hl ? 2 : 1;
+              ctx.stroke();
+            }
+          });
+        }
+        for (let i = 0; i < hHeap.length; i++) {
+          const { x, y } = pos[i],
+            hl = hHl.has(i),
+            isRoot = i === 0;
+          if (hl || isRoot) {
+            ctx.beginPath();
+            ctx.arc(x, y, nodeR + 6, 0, Math.PI * 2);
+            ctx.fillStyle = isRoot
+              ? hType === "max"
+                ? "rgba(255,45,120,0.2)"
+                : "rgba(255,224,102,0.2)"
+              : "rgba(0,212,255,0.15)";
+            ctx.fill();
+          }
+          ctx.beginPath();
+          ctx.arc(x, y, nodeR, 0, Math.PI * 2);
+          if (hl) {
+            ctx.fillStyle = "rgba(0,212,255,0.15)";
+            ctx.strokeStyle = "#00d4ff";
+            ctx.lineWidth = 2;
+          } else if (isRoot) {
+            ctx.fillStyle =
+              hType === "max"
+                ? "rgba(255,45,120,0.15)"
+                : "rgba(255,224,102,0.15)";
+            ctx.strokeStyle = hType === "max" ? "#ff2d78" : "#ffe066";
+            ctx.lineWidth = 2;
+          } else {
+            ctx.fillStyle = "rgba(17,22,48,0.9)";
+            ctx.strokeStyle = "rgba(255,255,255,0.1)";
+            ctx.lineWidth = 1;
+          }
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = hl
+            ? "#00d4ff"
+            : isRoot
+              ? hType === "max"
+                ? "#ff2d78"
+                : "#ffe066"
+              : "#e2e8f8";
+          ctx.font = "bold " + Math.max(10, nodeR * 0.7) + "px JetBrains Mono";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(hHeap[i], x, y);
+          ctx.fillStyle = "rgba(90,99,128,0.55)";
+          ctx.font = Math.max(8, nodeR * 0.44) + "px JetBrains Mono";
+          ctx.fillText(i, x, y + nodeR + 8);
+        }
+      }
+
+      function hDrawArr() {
+        const c = document.getElementById("h-arr");
+        if (!hHeap.length) {
+          c.innerHTML =
+            '<span style="color:var(--muted);font-size:13px">No elements yet...</span>';
+          return;
+        }
+        c.innerHTML = hHeap
+          .map((v, i) => {
+            const hl = hHl.has(i),
+              ir = i === 0;
+            let cls = ir ? "cr" : hl ? "ch" : "cn";
+            return `<div class="arr-item"><div class="arr-cell ${cls}">${v}</div><div class="arr-idx">[${i}]</div></div>`;
+          })
+          .join("");
+      }
+
+      function hStats() {
+        document.getElementById("h-sz").textContent = hHeap.length;
+        document.getElementById("h-rt").textContent = hHeap.length
+          ? hHeap[0]
+          : "—";
+        document.getElementById("h-ops").textContent = hOps;
+      }
+
+      function hRA() {
+        hDrawTree();
+        hDrawArr();
+        hStats();
+      }
+
+      function hLog(msg, type = "info") {
+        const log = document.getElementById("h-log");
+        const d = document.createElement("div");
+        d.className = "log-entry " + type;
+        d.innerHTML = `<span class="log-num">#${String(++hStep).padStart(2, "0")}</span><span class="log-txt">${msg}</span>`;
+        log.appendChild(d);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      // ════════════ TAB 2: SORTING ════════════
+      let sArr = [],
+        sOrig = [],
+        sAlgo = "heap",
+        sSpd = 3,
+        sSorting = false,
+        sComps = 0,
+        sSwaps = 0,
+        sStep = 0;
+      const BC = {
+        normal: "rgba(180,77,255,0.5)",
+        compare: "rgba(255,224,102,0.85)",
+        swap: "rgba(255,45,120,0.85)",
+        pivot: "rgba(0,212,255,0.85)",
+        sorted: "rgba(0,255,179,0.7)",
+        selected: "rgba(255,149,0,0.85)",
+      };
+      const BG = {
+        normal: "none",
+        compare: "0 0 8px rgba(255,224,102,0.5)",
+        swap: "0 0 8px rgba(255,45,120,0.5)",
+        pivot: "0 0 8px rgba(0,212,255,0.5)",
+        sorted: "0 0 6px rgba(0,255,179,0.4)",
+        selected: "0 0 8px rgba(255,149,0,0.5)",
+      };
+      const sDesc = {
+        heap: '<b style="color:var(--cyan)">Heap Sort</b><br><br>Phase 1: Build max-heap O(n)<br>Phase 2: Extract root repeatedly<br>Result: sorted in-place, O(n log n)',
+        selection:
+          '<b style="color:var(--pink)">Selection Sort</b><br><br>For each position i:<br>• Scan for minimum<br>• Swap to position i<br>Simple but O(n²)',
+        merge:
+          '<b style="color:var(--purple)">Merge Sort</b><br><br>Divide: split recursively<br>Conquer: merge sorted halves<br>Stable, O(n log n), O(n) space',
+      };
+
+      function sAlgoSel(a) {
+        sAlgo = a;
+        ["heap", "selection", "merge"].forEach((x) => {
+          document.getElementById("sc-" + x).className =
+            "algo-card" + (x === a ? " a" + x[0] : "");
+        });
+        document.getElementById("s-desc").innerHTML = sDesc[a];
+        if (!sSorting) sReset();
+      }
+
+      function sGenRandom() {
+        if (sSorting) return;
+        const n = Math.min(
+          28,
+          Math.max(4, parseInt(document.getElementById("s-sz").value) || 14),
+        );
+        sArr = Array.from(
+          { length: n },
+          () => Math.floor(Math.random() * 88) + 5,
+        );
+        sOrig = [...sArr];
+        sStat();
+        sBars(sArr.map(() => "normal"));
+        sLog("Generated " + n + " random elements.", "info");
+      }
+
+      function sLoadCustom() {
+        if (sSorting) return;
+        const p = document
+          .getElementById("s-custom")
+          .value.split(",")
+          .map((v) => parseInt(v.trim()))
+          .filter((v) => !isNaN(v));
+        if (p.length < 2) {
+          sLog("Enter at least 2 numbers!", "error");
+          return;
+        }
+        if (p.length > 28) {
+          sLog("Max 28 elements!", "error");
+          return;
+        }
+        sArr = p;
+        sOrig = [...sArr];
+        sStat();
+        sBars(sArr.map(() => "normal"));
+        sLog("Loaded: [" + sArr.join(", ") + "]", "info");
+      }
+
+      function sReset() {
+        if (sSorting) return;
+        sArr = [...sOrig];
+        sComps = 0;
+        sSwaps = 0;
+        sStat();
+        if (sArr.length) sBars(sArr.map(() => "normal"));
+        sSS("Ready", "var(--green)");
+      }
+
+      function sStat() {
+        document.getElementById("s-sz-v").textContent = sArr.length;
+        document.getElementById("s-comps").textContent = sComps;
+        document.getElementById("s-swaps").textContent = sSwaps;
+      }
+
+      function sSS(t, c) {
+        const el = document.getElementById("s-status");
+        el.textContent = t;
+        el.style.color = c;
+      }
+      function sDly() {
+        return [650, 420, 260, 140, 55][sSpd - 1];
+      }
+
+      function sBars(states) {
+        const ct = document.getElementById("s-bars");
+        if (!sArr.length) {
+          ct.innerHTML =
+            '<div style="color:var(--muted);font-size:13px;margin:auto">Load or generate an array.</div>';
+          return;
+        }
+        const mx = Math.max(...sArr);
+        ct.innerHTML = sArr
+          .map((v, i) => {
+            const h = Math.max(6, Math.round((v / mx) * 195));
+            const st = states[i] || "normal";
+            return `<div class="bw"><div class="bar" style="height:${h}px;background:${BC[st]};box-shadow:${BG[st]};"><span class="blbl">${v}</span></div></div>`;
+          })
+          .join("");
+      }
+
+      function sSetSt(states) {
+        const bars = document.querySelectorAll("#s-bars .bar");
+        states.forEach((st, i) => {
+          if (bars[i]) {
+            bars[i].style.background = BC[st] || BC.normal;
+            bars[i].style.boxShadow = BG[st] || BG.normal;
+          }
+        });
+      }
+
+      function sUpdH() {
+        const bars = document.querySelectorAll("#s-bars .bar");
+        const lbls = document.querySelectorAll("#s-bars .blbl");
+        const mx = Math.max(...sArr);
+        sArr.forEach((v, i) => {
+          if (bars[i]) {
+            bars[i].style.height =
+              Math.max(6, Math.round((v / mx) * 195)) + "px";
+            if (lbls[i]) lbls[i].textContent = v;
+          }
+        });
+      }
+
+      function sLog(msg, type = "info") {
+        const log = document.getElementById("s-log");
+        const d = document.createElement("div");
+        d.className = "log-entry " + type;
+        d.innerHTML = `<span class="log-num">#${String(++sStep).padStart(2, "0")}</span><span class="log-txt">${msg}</span>`;
+        log.appendChild(d);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      async function sStart() {
+        if (sSorting) return;
+        if (sArr.length < 2) {
+          sLog("Load an array first!", "error");
+          return;
+        }
+        sSorting = true;
+        document.getElementById("s-start-btn").disabled = true;
+        document.getElementById("s-reset-btn").disabled = true;
+        sSS("Sorting…", "var(--yellow)");
+        sComps = 0;
+        sSwaps = 0;
+        sLog(
+          "Starting " +
+            (sAlgo === "heap"
+              ? "Heap Sort"
+              : sAlgo === "selection"
+                ? "Selection Sort"
+                : "Merge Sort") +
+            "...",
+          "phase",
+        );
+        if (sAlgo === "heap") await sHS();
+        else if (sAlgo === "selection") await sSS2();
+        else await sMS();
+        sBars(sArr.map(() => "sorted"));
+        sSS("Done ✓", "var(--green)");
+        sLog(
+          "✓ Sorted! Comps: <b>" +
+            sComps +
+            "</b> · Swaps: <b>" +
+            sSwaps +
+            "</b>",
+          "success",
+        );
+        sSorting = false;
+        document.getElementById("s-start-btn").disabled = false;
+        document.getElementById("s-reset-btn").disabled = false;
+      }
+
+      async function sHS() {
+        const n = sArr.length,
+          st = sArr.map(() => "normal");
+        sLog("Phase 1: Building max-heap...", "phase");
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) await sHfy(n, i, st);
+        sLog("Phase 2: Extracting elements...", "phase");
+        for (let i = n - 1; i > 0; i--) {
+          st[0] = "pivot";
+          st[i] = "swap";
+          sSetSt(st);
+          await sleep(sDly());
+          [sArr[0], sArr[i]] = [sArr[i], sArr[0]];
+          sSwaps++;
+          document.getElementById("s-swaps").textContent = sSwaps;
+          sUpdH();
+          st[i] = "sorted";
+          st[0] = "normal";
+          sSetSt(st);
+          await sleep(sDly() * 0.45);
+          sLog("Placed <b>" + sArr[i] + "</b> at position " + i, "warning");
+          await sHfy(i, 0, st);
+        }
+        st[0] = "sorted";
+        sSetSt(st);
+      }
+
+      async function sHfy(n, i, st) {
+        let lg = i;
+        const l = 2 * i + 1,
+          r = 2 * i + 2;
+        if (l < n) {
+          st[i] = "compare";
+          st[l] = "compare";
+          sSetSt(st);
+          sComps++;
+          document.getElementById("s-comps").textContent = sComps;
+          await sleep(sDly() * 0.45);
+          if (sArr[l] > sArr[lg]) lg = l;
+          st[i] = "normal";
+          st[l] = "normal";
+        }
+        if (r < n) {
+          st[lg] = "compare";
+          st[r] = "compare";
+          sSetSt(st);
+          sComps++;
+          document.getElementById("s-comps").textContent = sComps;
+          await sleep(sDly() * 0.45);
+          if (sArr[r] > sArr[lg]) lg = r;
+          st[lg] = "normal";
+          st[r] = "normal";
+        }
+        if (lg !== i) {
+          st[i] = "swap";
+          st[lg] = "swap";
+          sSetSt(st);
+          await sleep(sDly() * 0.5);
+          [sArr[i], sArr[lg]] = [sArr[lg], sArr[i]];
+          sSwaps++;
+          document.getElementById("s-swaps").textContent = sSwaps;
+          sUpdH();
+          st[i] = "normal";
+          st[lg] = "normal";
+          sSetSt(st);
+          await sHfy(n, lg, st);
+        }
+      }
+
+      async function sSS2() {
+        const n = sArr.length,
+          st = sArr.map(() => "normal");
+        for (let i = 0; i < n - 1; i++) {
+          let mi = i;
+          st[i] = "pivot";
+          sSetSt(st);
+          sLog("Pass " + (i + 1) + ": finding min...", "phase");
+          for (let j = i + 1; j < n; j++) {
+            st[j] = "compare";
+            if (mi !== i) st[mi] = "selected";
+            sSetSt(st);
+            sComps++;
+            document.getElementById("s-comps").textContent = sComps;
+            await sleep(sDly());
+            if (sArr[j] < sArr[mi]) {
+              if (mi !== i) st[mi] = "normal";
+              mi = j;
+              st[mi] = "selected";
+            } else st[j] = "normal";
+            sSetSt(st);
+          }
+          if (mi !== i) {
+            st[i] = "swap";
+            st[mi] = "swap";
+            sSetSt(st);
+            await sleep(sDly());
+            [sArr[i], sArr[mi]] = [sArr[mi], sArr[i]];
+            sSwaps++;
+            document.getElementById("s-swaps").textContent = sSwaps;
+            sUpdH();
+            sLog("Swapped <b>" + sArr[i] + "</b> to position " + i, "warning");
+          } else sLog("<b>" + sArr[i] + "</b> already in place", "info");
+          for (let k = i + 1; k < n; k++) st[k] = "normal";
+          st[i] = "sorted";
+          sSetSt(st);
+          await sleep(sDly() * 0.4);
+        }
+        st[n - 1] = "sorted";
+        sSetSt(st);
+      }
+
+      async function sMS() {
+        const st = sArr.map(() => "normal");
+        await sMSH(0, sArr.length - 1, st);
+      }
+
+      async function sMSH(l, r, st) {
+        if (l >= r) return;
+        const m = Math.floor((l + r) / 2);
+        sLog("Dividing [" + l + ".." + r + "]", "phase");
+        for (let i = l; i <= r; i++) st[i] = "compare";
+        sSetSt(st);
+        await sleep(sDly() * 0.35);
+        for (let i = l; i <= r; i++) st[i] = "normal";
+        await sMSH(l, m, st);
+        await sMSH(m + 1, r, st);
+        await sMG(l, m, r, st);
+      }
+
+      async function sMG(l, m, r, st) {
+        const L = sArr.slice(l, m + 1),
+          R = sArr.slice(m + 1, r + 1);
+        let i = 0,
+          j = 0,
+          k = l;
+        sLog(
+          "Merging [" + l + ".." + m + "] + [" + (m + 1) + ".." + r + "]",
+          "info",
+        );
+        while (i < L.length && j < R.length) {
+          st[k] = "compare";
+          sSetSt(st);
+          sComps++;
+          document.getElementById("s-comps").textContent = sComps;
+          await sleep(sDly());
+          if (L[i] <= R[j]) sArr[k] = L[i++];
+          else {
+            sArr[k] = R[j++];
+            sSwaps++;
+            document.getElementById("s-swaps").textContent = sSwaps;
+          }
+          sUpdH();
+          st[k] = "pivot";
+          sSetSt(st);
+          await sleep(sDly() * 0.3);
+          k++;
+        }
+        while (i < L.length) {
+          sArr[k] = L[i];
+          st[k] = "pivot";
+          i++;
+          k++;
+        }
+        while (j < R.length) {
+          sArr[k] = R[j];
+          st[k] = "pivot";
+          j++;
+          k++;
+        }
+        sUpdH();
+        for (let x = l; x <= r; x++) st[x] = "sorted";
+        sSetSt(st);
+        await sleep(sDly() * 0.28);
+      }
+
+      // ════════════ TAB 3: KTH & PQ ════════════
+      let kArr = [],
+        kMode = "smallest",
+        kAlgo = "heap",
+        kSpd = 3,
+        kStep = 0;
+      let pqH = [],
+        pqOps = 0,
+        pqStep = 0;
+
+      function kSwitch(m) {
+        document.getElementById("ksub-kth").className =
+          "sub" + (m === "kth" ? " on" : "");
+        document.getElementById("ksub-pq").className =
+          "sub" + (m === "pq" ? " on" : "");
+        document.getElementById("km-kth").className =
+          "mode-btn" + (m === "kth" ? " mk" : "");
+        document.getElementById("km-pq").className =
+          "mode-btn" + (m === "pq" ? " mq" : "");
+      }
+
+      function kGen() {
+        const n = Math.floor(Math.random() * 8) + 6;
+        kArr = Array.from(
+          { length: n },
+          () => Math.floor(Math.random() * 90) + 1,
+        );
+        document.getElementById("k-kv").max = n;
+        kDraw(kArr.map(() => "kn"));
+        document.getElementById("k-sz").textContent = kArr.length;
+        document.getElementById("k-res-card").style.display = "none";
+        kLog("Generated: [" + kArr.join(", ") + "]", "info");
+      }
+
+      function kLoad() {
+        const p = document
+          .getElementById("k-arr")
+          .value.split(",")
+          .map((v) => parseInt(v.trim()))
+          .filter((v) => !isNaN(v));
+        if (p.length < 2) {
+          kLog("Enter at least 2 numbers!", "error");
+          return;
+        }
+        kArr = p;
+        document.getElementById("k-kv").max = kArr.length;
+        kDraw(kArr.map(() => "kn"));
+        document.getElementById("k-sz").textContent = kArr.length;
+        document.getElementById("k-res-card").style.display = "none";
+        kLog("Loaded: [" + kArr.join(", ") + "]", "info");
+      }
+
+      function kReset() {
+        kDraw(kArr.map(() => "kn"));
+        document.getElementById("k-res-card").style.display = "none";
+        document.getElementById("k-ans").textContent = "—";
+      }
+
+      function kDraw(states) {
+        const c = document.getElementById("k-disp");
+        if (!kArr.length) {
+          c.innerHTML =
+            '<span style="color:var(--muted);font-size:13px">Load or generate an array...</span>';
+          return;
+        }
+        c.innerHTML = kArr
+          .map(
+            (v, i) =>
+              `<div class="kc"><div class="kb ${states[i] || "kn"}">${v}</div><div class="ki">[${i}]</div></div>`,
+          )
+          .join("");
+      }
+
+      function kDly() {
+        return [600, 400, 240, 130, 50][kSpd - 1];
+      }
+
+      function kLog(msg, type = "info") {
+        const log = document.getElementById("k-log");
+        const d = document.createElement("div");
+        d.className = "log-entry " + type;
+        d.innerHTML = `<span class="log-num">#${String(++kStep).padStart(2, "0")}</span><span class="log-txt">${msg}</span>`;
+        log.appendChild(d);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function kOrd(n) {
+        return n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th";
+      }
+
+      async function kFind() {
+        if (!kArr.length) {
+          kLog("Load an array first!", "error");
+          return;
+        }
+        const k = parseInt(document.getElementById("k-kv").value);
+        if (isNaN(k) || k < 1 || k > kArr.length) {
+          kLog("K must be 1–" + kArr.length, "error");
+          return;
+        }
+        document.getElementById("k-kstat").textContent = k;
+        document.getElementById("k-res-card").style.display = "none";
+        kLog("Finding " + k + kOrd(k) + " " + kMode + "...", "info");
+        const sorted = [...kArr].sort((a, b) =>
+          kMode === "smallest" ? a - b : b - a,
+        );
+        const states = kArr.map(() => "kn");
+        for (let i = 0; i < kArr.length; i++) {
+          states[i] = "ka";
+          kDraw([...states]);
+          await sleep(kDly());
+          states[i] = i < k ? "ka" : "ks";
+          kDraw([...states]);
+          await sleep(kDly() * 0.4);
+        }
+        const answer = sorted[k - 1];
+        kDraw(
+          kArr.map((v) =>
+            v === answer
+              ? "kres"
+              : (kMode === "smallest" && v < answer) ||
+                  (kMode === "largest" && v > answer)
+                ? "ka"
+                : "ks",
+          ),
+        );
+        document.getElementById("k-ans").textContent = answer;
+        document.getElementById("k-res-card").style.display = "block";
+        document.getElementById("k-res-tag").textContent =
+          k + kOrd(k) + " " + (kMode === "smallest" ? "Smallest" : "Largest");
+        document.getElementById("k-res-val").textContent = answer;
+        document.getElementById("k-res-sub").textContent =
+          "Array size: " +
+          kArr.length +
+          " · " +
+          (kAlgo === "heap" ? "O(n log k)" : "O(n log n)");
+        kLog("✓ Answer: <b>" + answer + "</b>", "result");
+      }
+
+      function pqCmp2(a, b) {
+        return a.priority > b.priority;
+      }
+      function pqUp2(i) {
+        while (i > 0) {
+          const p = Math.floor((i - 1) / 2);
+          if (pqCmp2(pqH[i], pqH[p])) {
+            [pqH[i], pqH[p]] = [pqH[p], pqH[i]];
+            i = p;
+          } else break;
+        }
+      }
+      function pqDn2(i) {
+        while (true) {
+          const l = 2 * i + 1,
+            r = 2 * i + 2;
+          let lg = i;
+          if (l < pqH.length && pqCmp2(pqH[l], pqH[lg])) lg = l;
+          if (r < pqH.length && pqCmp2(pqH[r], pqH[lg])) lg = r;
+          if (lg !== i) {
+            [pqH[i], pqH[lg]] = [pqH[lg], pqH[i]];
+            i = lg;
+          } else break;
+        }
+      }
+
+      function pqIns() {
+        const pri = parseInt(document.getElementById("pq-p").value);
+        const lbl =
+          document.getElementById("pq-l").value.trim() ||
+          "Task " + String.fromCharCode(65 + (pqH.length % 26));
+        if (isNaN(pri)) {
+          pqLog("Enter a valid priority!", "error");
+          return;
+        }
+        pqH.push({ priority: pri, label: lbl });
+        pqUp2(pqH.length - 1);
+        pqOps++;
+        document.getElementById("pq-p").value = "";
+        document.getElementById("pq-l").value = "";
+        pqDraw();
+        pqStat();
+        pqLog(
+          "Inserted <b>" + lbl + "</b> (priority " + pri + "). O(log n)",
+          "info",
+        );
+      }
+
+      function pqExt() {
+        if (!pqH.length) {
+          pqLog("Queue is empty!", "error");
+          return;
+        }
+        const max = pqH[0];
+        pqH[0] = pqH[pqH.length - 1];
+        pqH.pop();
+        if (pqH.length) pqDn2(0);
+        pqOps++;
+        pqDraw();
+        pqStat();
+        pqLog(
+          "Extracted <b>" +
+            max.label +
+            "</b> (priority " +
+            max.priority +
+            "). O(log n)",
+          "warning",
+        );
+      }
+
+      function pqPeek() {
+        if (!pqH.length) {
+          pqLog("Queue is empty!", "error");
+          return;
+        }
+        pqOps++;
+        pqStat();
+        pqLog(
+          "Peek: <b>" +
+            pqH[0].label +
+            "</b> — priority <b>" +
+            pqH[0].priority +
+            "</b>. O(1)",
+          "result",
+        );
+      }
+
+      function pqSample() {
+        const s = [
+          { priority: 95, label: "Critical Bug" },
+          { priority: 85, label: "Server Alert" },
+          { priority: 75, label: "Client Request" },
+          { priority: 70, label: "Feature Deploy" },
+          { priority: 60, label: "Meeting Prep" },
+          { priority: 40, label: "Code Review" },
+          { priority: 30, label: "Documentation" },
+        ];
+        pqH = [];
+        s.forEach((x) => {
+          pqH.push(x);
+          pqUp2(pqH.length - 1);
+        });
+        pqOps++;
+        pqDraw();
+        pqStat();
+        pqLog("Loaded " + s.length + " sample tasks.", "info");
+      }
+
+      function pqClear() {
+        pqH = [];
+        pqOps = 0;
+        pqStep = 0;
+        pqDraw();
+        pqStat();
+        document.getElementById("pq-log").innerHTML =
+          '<div class="log-entry info"><span class="log-num">#00</span><span class="log-txt">Queue cleared.</span></div>';
+      }
+
+      function pqDraw() {
+        const ct = document.getElementById("pq-list");
+        if (!pqH.length) {
+          ct.innerHTML =
+            '<div style="color:var(--muted);font-size:13px;padding:18px;text-align:center">Queue is empty.</div>';
+          return;
+        }
+        const sorted = [...pqH].sort((a, b) => b.priority - a.priority);
+        const cols = [
+          "var(--cyan)",
+          "var(--green)",
+          "var(--purple)",
+          "var(--yellow)",
+        ];
+        ct.innerHTML = sorted
+          .map((item, i) => {
+            const rc = i === 0 ? "r1" : i === 1 ? "r2" : i === 2 ? "r3" : "rx";
+            const crown = i === 0 ? '<span class="pq-cr">👑</span>' : "";
+            return `<div class="pq-row ${rc}" style="position:relative"><span class="pq-rk">#${i + 1}</span><span class="pq-pr" style="color:${cols[Math.min(i, 3)]}">${item.priority}</span><span class="pq-nm">${item.label}</span>${crown}</div>`;
+          })
+          .join("");
+      }
+
+      function pqStat() {
+        document.getElementById("pq-sz").textContent = pqH.length;
+        document.getElementById("pq-ops").textContent = pqOps;
+        document.getElementById("pq-max").textContent = pqH.length
+          ? pqH[0].priority
+          : "—";
+      }
+
+      function pqLog(msg, type = "info") {
+        const log = document.getElementById("pq-log");
+        const d = document.createElement("div");
+        d.className = "log-entry " + type;
+        d.innerHTML = `<span class="log-num">#${String(++pqStep).padStart(2, "0")}</span><span class="log-txt">${msg}</span>`;
+        log.appendChild(d);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      // ════════════ TAB 4: COMPLEXITY ════════════
+      const CXC = {
+        O1: { fn: (n) => 1, color: "#00ffb3", on: true, lbl: "O(1)" },
+        Ologn: {
+          fn: (n) => Math.log2(Math.max(n, 1)),
+          color: "#00d4ff",
+          on: true,
+          lbl: "O(log n)",
+        },
+        On: { fn: (n) => n, color: "#ffe066", on: true, lbl: "O(n)" },
+        Onlogn: {
+          fn: (n) => n * Math.log2(Math.max(n, 1)),
+          color: "#b44dff",
+          on: true,
+          lbl: "O(n log n)",
+        },
+        On2: { fn: (n) => n * n, color: "#ff9500", on: true, lbl: "O(n²)" },
+        O2n: {
+          fn: (n) => Math.min(Math.pow(2, n), 1e9),
+          color: "#ff2d78",
+          on: true,
+          lbl: "O(2ⁿ)",
+        },
+      };
+      const CXM = {
+        O1: "tg",
+        Ologn: "tc",
+        On: "ty",
+        Onlogn: "tpu",
+        On2: "to",
+        O2n: "tp",
+      };
+
+      function cxTog(key) {
+        CXC[key].on = !CXC[key].on;
+        const btn = document.querySelector('[data-k="' + key + '"]');
+        btn.className = "tog" + (CXC[key].on ? " " + CXM[key] : "");
+        cxDrawChart();
+      }
+
+      function cxDrawChart() {
+        const canvas = document.getElementById("cx-chart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const W = canvas.offsetWidth || 480,
+          H = 250;
+        canvas.width = W;
+        canvas.height = H;
+        const pad = { top: 12, right: 56, bottom: 36, left: 46 };
+        const cW = W - pad.left - pad.right,
+          cH = H - pad.top - pad.bottom;
+        const maxN = 30,
+          steps = 300;
+        ctx.clearRect(0, 0, W, H);
+        ctx.strokeStyle = "rgba(255,255,255,0.035)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+          const y = pad.top + (cH / 5) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(pad.left + cW, y);
+          ctx.stroke();
+          const x = pad.left + (cW / 5) * i;
+          ctx.beginPath();
+          ctx.moveTo(x, pad.top);
+          ctx.lineTo(x, pad.top + cH);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, pad.top);
+        ctx.lineTo(pad.left, pad.top + cH);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pad.left, pad.top + cH);
+        ctx.lineTo(pad.left + cW, pad.top + cH);
+        ctx.stroke();
+        let maxY = 0;
+        Object.values(CXC).forEach((c) => {
+          if (!c.on) return;
+          for (let i = 1; i <= steps; i++) {
+            const v = c.fn((i / steps) * maxN);
+            if (isFinite(v) && v > maxY) maxY = v;
+          }
+        });
+        if (!maxY) return;
+        Object.entries(CXC).forEach(([key, c]) => {
+          if (!c.on) return;
+          ctx.beginPath();
+          ctx.strokeStyle = c.color;
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = c.color;
+          ctx.shadowBlur = 5;
+          let first = true;
+          for (let i = 1; i <= steps; i++) {
+            const n = (i / steps) * maxN;
+            const raw = c.fn(n);
+            const y = Math.min(raw, maxY);
+            const px = pad.left + (n / maxN) * cW;
+            const py = pad.top + cH - (y / maxY) * cH;
+            if (first) {
+              ctx.moveTo(px, py);
+              first = false;
+            } else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          const endY = pad.top + cH - (Math.min(c.fn(maxN), maxY) / maxY) * cH;
+          if (endY > pad.top + 5 && endY < pad.top + cH - 4) {
+            ctx.fillStyle = c.color;
+            ctx.font = "bold 9px JetBrains Mono";
+            ctx.textAlign = "left";
+            ctx.fillText(c.lbl, pad.left + cW + 4, endY + 3);
+          }
+        });
+        ctx.fillStyle = "rgba(90,99,128,0.55)";
+        ctx.font = "9px JetBrains Mono";
+        ctx.textAlign = "center";
+        [5, 10, 15, 20, 25, 30].forEach((n) => {
+          ctx.fillText(n, pad.left + (n / maxN) * cW, pad.top + cH + 13);
+        });
+        ctx.fillText("n →", pad.left + cW / 2, H - 3);
+      }
+
+      async function cxBench() {
+        const N = Math.min(
+          50000,
+          Math.max(
+            10,
+            parseInt(document.getElementById("cx-bn").value) || 2000,
+          ),
+        );
+        const runs = Math.min(
+          10,
+          Math.max(1, parseInt(document.getElementById("cx-br").value) || 3),
+        );
+        const btn = document.getElementById("cx-btn");
+        btn.textContent = "⏳ Running…";
+        btn.disabled = true;
+        document.getElementById("cx-tbody").innerHTML =
+          '<tr><td colspan="5" style="color:var(--yellow);text-align:center;padding:16px">Benchmarking N=' +
+          N.toLocaleString() +
+          " × " +
+          runs +
+          " runs…</td></tr>";
+        await sleep(60);
+        const algos = [
+          { name: "Heap Sort", color: "#00d4ff", fn: cxH },
+          { name: "Selection", color: "#ff2d78", fn: cxS },
+          { name: "Merge Sort", color: "#b44dff", fn: cxM },
+        ];
+        const res = [];
+        for (const a of algos) {
+          let tt = 0,
+            tc = 0,
+            ts = 0;
+          for (let r = 0; r < runs; r++) {
+            const arr = Array.from({ length: N }, () =>
+              Math.floor(Math.random() * 100000),
+            );
+            const t0 = performance.now();
+            const { comps, swaps } = a.fn([...arr]);
+            tt += performance.now() - t0;
+            tc += comps;
+            ts += swaps;
+          }
+          res.push({
+            name: a.name,
+            color: a.color,
+            time: (tt / runs).toFixed(2),
+            comps: Math.round(tc / runs),
+            swaps: Math.round(ts / runs),
+          });
+          await sleep(10);
+        }
+        const mt = Math.max(...res.map((r) => parseFloat(r.time)));
+        const totalC = res.reduce((s, r) => s + r.comps, 0);
+        document.getElementById("cx-tbody").innerHTML = res
+          .map((r) => {
+            const bw = Math.round((parseFloat(r.time) / mt) * 100);
+            return `<tr><td style="color:${r.color};font-weight:700">${r.name}</td><td>${r.comps.toLocaleString()}</td><td>${r.swaps.toLocaleString()}</td><td>${r.time} ms</td><td><div class="pbw"><div class="pb" style="width:${Math.max(bw, 2)}%;background:${r.color};opacity:0.7;max-width:80px;"></div><span class="pv">${bw}%</span></div></td></tr>`;
+          })
+          .join("");
+        document.getElementById("cx-fast").textContent = res
+          .reduce((a, b) => (parseFloat(a.time) < parseFloat(b.time) ? a : b))
+          .name.split(" ")[0];
+        document.getElementById("cx-ops").textContent = totalC.toLocaleString();
+        document.getElementById("cx-n").textContent = N.toLocaleString();
+        btn.textContent = "▶ Run Benchmark";
+        btn.disabled = false;
+      }
+
+      function cxH(arr) {
+        let c = 0,
+          s = 0;
+        const n = arr.length;
+        function h(n, i) {
+          let lg = i,
+            l = 2 * i + 1,
+            r = 2 * i + 2;
+          if (l < n) {
+            c++;
+            if (arr[l] > arr[lg]) lg = l;
+          }
+          if (r < n) {
+            c++;
+            if (arr[r] > arr[lg]) lg = r;
+          }
+          if (lg !== i) {
+            [arr[i], arr[lg]] = [arr[lg], arr[i]];
+            s++;
+            h(n, lg);
+          }
+        }
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) h(n, i);
+        for (let i = n - 1; i > 0; i--) {
+          [arr[0], arr[i]] = [arr[i], arr[0]];
+          s++;
+          h(i, 0);
+        }
+        return { comps: c, swaps: s };
+      }
+      function cxS(arr) {
+        let c = 0,
+          s = 0;
+        for (let i = 0; i < arr.length - 1; i++) {
+          let m = i;
+          for (let j = i + 1; j < arr.length; j++) {
+            c++;
+            if (arr[j] < arr[m]) m = j;
+          }
+          if (m !== i) {
+            [arr[i], arr[m]] = [arr[m], arr[i]];
+            s++;
+          }
+        }
+        return { comps: c, swaps: s };
+      }
+      function cxM(arr) {
+        let c = 0,
+          s = 0;
+        function mg(l, m, r) {
+          const L = arr.slice(l, m + 1),
+            R = arr.slice(m + 1, r + 1);
+          let i = 0,
+            j = 0,
+            k = l;
+          while (i < L.length && j < R.length) {
+            c++;
+            if (L[i] <= R[j]) arr[k++] = L[i++];
+            else {
+              arr[k++] = R[j++];
+              s++;
+            }
+          }
+          while (i < L.length) arr[k++] = L[i++];
+          while (j < R.length) arr[k++] = R[j++];
+        }
+        function ms(l, r) {
+          if (l >= r) return;
+          const m = Math.floor((l + r) / 2);
+          ms(l, m);
+          ms(m + 1, r);
+          mg(l, m, r);
+        }
+        ms(0, arr.length - 1);
+        return { comps: c, swaps: s };
+      }
+
+      const CXM2 = [
+        {
+          name: "Heap Sort",
+          color: "#00d4ff",
+          fn: (n) => Math.round(n * Math.log2(Math.max(n, 2))),
+        },
+        {
+          name: "Merge Sort",
+          color: "#b44dff",
+          fn: (n) => Math.round(n * Math.log2(Math.max(n, 2))),
+        },
+        {
+          name: "Selection",
+          color: "#ff2d78",
+          fn: (n) => Math.round((n * (n - 1)) / 2),
+        },
+        { name: "Build Heap", color: "#ffe066", fn: (n) => Math.round(2 * n) },
+        {
+          name: "Binary Search",
+          color: "#00ffb3",
+          fn: (n) => Math.round(Math.log2(Math.max(n, 2))),
+        },
+        { name: "Linear Search", color: "#ff9500", fn: (n) => n },
+      ];
+
+      function cxMeters() {
+        const n = Math.max(
+          2,
+          parseInt(document.getElementById("cx-mn").value) || 100,
+        );
+        const vals = CXM2.map((a) => ({ ...a, val: a.fn(n) }));
+        const mx = Math.max(...vals.map((v) => v.val));
+        document.getElementById("cx-meters").innerHTML = vals
+          .map((v) => {
+            const pct = Math.max(1, Math.round((v.val / mx) * 100));
+            return `<div class="m-row"><div class="m-lbl">${v.name}</div><div class="m-bg"><div class="m-fill" style="width:${pct}%;background:${v.color};box-shadow:0 0 5px ${v.color}44;"></div></div><div class="m-val" style="color:${v.color}">${v.val.toLocaleString()}</div></div>`;
+          })
+          .join("");
+      }
+
+      // ════════════ INIT ════════════
+      sAlgoSel("heap");
+      sGenRandom();
+      kGen();
+      cxMeters();
+      window.addEventListener("resize", () => {
+        hRA();
+        if (document.getElementById("panel-4").classList.contains("active"))
+          cxDrawChart();
+      });
+    </script>
+  </body>
+</html>
